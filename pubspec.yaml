@@ -1,0 +1,72 @@
+name: lastu_pdate_chat_app
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  audioplayers: ^6.5.1
+  cupertino_icons: ^1.0.8
+  dio: ^5.9.0
+  file_picker: ^10.3.6
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_sound: ^9.28.0
+  fluttertoast: ^9.0.0
+  geolocator: ^14.0.2
+  http: ^1.6.0
+  image_picker: ^1.2.1
+  intl: ^0.20.2
+  lottie: ^3.3.2
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  pdfx: ^2.9.2
+  permission_handler: ^12.0.1
+  shared_preferences: ^2.5.3
+  smooth_page_indicator: ^1.2.1
+  supabase_flutter: ^2.10.3
+  url_launcher: ^6.3.2
+  uuid: ^4.5.2
+  webview_flutter: ^4.13.0
+  zego_uikit_prebuilt_call: ^4.21.1
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/3.png"
+
+  flutter_test:
+
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/
