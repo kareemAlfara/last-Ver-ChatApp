@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lastu_pdate_chat_app/src/data/models/usersmodel.dart';
@@ -25,7 +24,6 @@ class Chatingscreen extends StatelessWidget {
           var cubit = MessagesCubit.get(context);
           return Scaffold(
             appBar: AppBar(
-              
               leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -42,12 +40,17 @@ class Chatingscreen extends StatelessWidget {
                     backgroundImage: NetworkImage(model.image),
                     radius: 22,
                   ),
-                  // SizedBox(width: 22),
-                  defulttext(data: model.name, color: Colors.white, fSize: 22),
+                  SizedBox(width: 22),
+                  Expanded(
+                    child: defulttext(
+                      data: model.name,
+                      color: Colors.white,
+                      fSize: 22,
+                    ),
+                  ),
                 ],
               ),
               actions: [
-                
                 IconButton(
                   icon: Icon(Icons.videocam),
                   onPressed: () {
