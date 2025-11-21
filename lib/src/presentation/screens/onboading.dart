@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/screens/loginScreen.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/pages/loginScreen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

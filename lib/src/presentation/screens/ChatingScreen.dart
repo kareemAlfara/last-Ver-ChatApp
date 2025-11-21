@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lastu_pdate_chat_app/src/data/models/usersmodel.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/data/models/usersmodel.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/entities/userEntity.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/cubits/meesagescubit/messages_cubit.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/screens/CallPage%20.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/widgets/chatingWidget.dart';
@@ -9,7 +10,7 @@ import 'package:lastu_pdate_chat_app/src/services/components.dart';
 
 class Chatingscreen extends StatelessWidget {
   const Chatingscreen({super.key, required this.model});
-  final Usersmodel model;
+  final Userentity model;
   // final String friendId;
   @override
   Widget build(BuildContext context) {

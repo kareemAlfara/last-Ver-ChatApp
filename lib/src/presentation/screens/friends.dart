@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/cubits/logincubit/login_cubit.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/screens/loginScreen.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/logincubit/login_cubit.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/pages/loginScreen.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/widgets/friendsWidegt.dart';
 import 'package:lastu_pdate_chat_app/src/services/components.dart';
 import 'package:lottie/lottie.dart';

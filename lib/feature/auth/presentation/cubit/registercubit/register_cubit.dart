@@ -1,25 +1,26 @@
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:bloc/bloc.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lastu_pdate_chat_app/src/data/models/usersmodel.dart';
-import 'package:lastu_pdate_chat_app/src/services/components.dart';
-import 'package:meta/meta.dart';
-import 'package:path/path.dart' as path;
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:lastu_pdate_chat_app/core/errors/AuthError.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/createuserUsecase.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/getAllusersusecase.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/uploadimageUsecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(RegisterInitial());
+  final Createuserusecase createuserusecase;
+  final Getallusersusecase getallusersusecase;
+  final Uploadimageusecase uploadimageusecase;
+  RegisterCubit({
+    required this.createuserusecase,
+    required this.uploadimageusecase,
+    required this.getallusersusecase,
+  }) : super(RegisterInitial());
   static RegisterCubit get(context) => BlocProvider.of(context);
   var formkey = GlobalKey<FormState>();
   var emailcontroller = TextEditingController();
@@ -49,50 +50,35 @@ class RegisterCubit extends Cubit<RegisterState> {
           textColor: Colors.white,
         );
       }
-      final response = await Supabase.instance.client.auth.signUp(
+      final response = await createuserusecase.call(
         email: email,
+        name: name,
+        image: imageUrl!,
         password: password,
+        phonenumber: phonenumber,
       );
-
-      if (response != null) {
-        await Supabase.instance.client.from("users").insert({
-          'user_uid': response.user!.id, // Supabase auth ID
-          'email': email,
-          'name': name,
-          'image': imageUrl,
-          "password": password,
-          "phonenumber": phonenumber,
-        });
-        if (response.user != null) {
-          uid = response.user!.id;
-
-          // CRITICAL FIX: Save user_id to SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user_id', uid!);
-
-          print("User ID saved to SharedPreferences: $uid");
-        }
-        emit(createUsersuccessState());
-      }
+      emit(createUsersuccessState());
+    } on AuthException catch (e) {
+      String userFriendlyMessage =Autherror().mapAuthErrorToUserMessage(e);
+      log('Auth Error: ${e.message}, Status: ${e.statusCode}');
+      emit(createUserFailureState(error: userFriendlyMessage));
     } on Exception catch (e) {
       emit(createUserFailureState(error: e.toString()));
       // TODO
     }
   }
 
-  List<Usersmodel> userslist = [];
+
   getAllusers() async {
     try {
-      final response = await Supabase.instance.client.from('users').select();
-
-      userslist.clear();
-      for (var row in response) {
-        userslist.add(Usersmodel.fromJson(row));
-      }
-
-      print("All users loaded: ${userslist.length}");
+      var respone =await getallusersusecase.execute();
+      
       emit(getAllUsersSuccessState());
-    } on Exception catch (e) {
+    }on AuthException catch (e) {
+      String userFriendlyMessage =Autherror().mapAuthErrorToUserMessage(e);
+      log('Auth Error: ${e.message}, Status: ${e.statusCode}');
+      emit(getAllUsersFailureState(error: userFriendlyMessage));
+    }  on Exception catch (e) {
       emit(getAllUsersFailureState(error: e.toString()));
     }
   }
@@ -107,7 +93,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       imageUrl = await uploadImageToSupabase(file);
       if (imageUrl != null) {
         log(imageUrl.toString());
-          Fluttertoast.showToast(
+        Fluttertoast.showToast(
           msg: " a profile picture Added",
           backgroundColor: Colors.green,
           textColor: Colors.white,
@@ -118,31 +104,16 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   Future<String?> uploadImageToSupabase(File file) async {
-    final supabase = Supabase.instance.client;
-    final fileExtension = path.extension(file.path); // .jpg أو .png
-    final uniqueId = const Uuid().v4(); // مولد UUID فريد
-    final fileName = '$uniqueId$fileExtension'; // اسم جديد وفريد
-    final fileBytes = await file.readAsBytes();
-
     try {
-      await supabase.storage
-          .from('users_images')
-          .uploadBinary('uploads/$fileName', fileBytes);
-
-      // final String publicUrl = supabase.storage
-      //     .from('users-images')
-      //     .getPublicUrl('uploads/$fileName');
-
-      final String publicUrl =
-          'https://hmyngrmjiqpwqcwegjbi.supabase.co/storage/v1/object/public/users_images/uploads/$fileName';
-
-      return publicUrl;
+      var response = await uploadimageusecase.call(file);
+      return response;
     } catch (e) {
       print('Upload error: $e');
       emit(PickImageFailureState(error: e.toString()));
       return null;
     }
   }
+
   @override
   Future<void> close() {
     // Clean up controllers

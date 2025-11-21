@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:lastu_pdate_chat_app/src/data/models/usersmodel.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/data/models/usersmodel.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/entities/userEntity.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/screens/ChatingScreen.dart';
 import 'package:lastu_pdate_chat_app/src/services/components.dart';
 
@@ -8,7 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class frindeswidget extends StatelessWidget {
   const frindeswidget({super.key, required this.model});
-  final Usersmodel model;
+  final Userentity model;
   @override
   Widget build(BuildContext context) {
       uid = Supabase.instance.client.auth.currentUser!.id;

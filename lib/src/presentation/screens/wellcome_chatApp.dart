@@ -1,7 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/cubits/logincubit/login_cubit.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/data/repositoryImpl/authRepoImpl.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/getAllusersusecase.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/loginusecase.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/logoutUsecase.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/logincubit/login_cubit.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/screens/friends.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -10,7 +14,14 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(),
+      create: (context) => LoginCubit(
+
+        loginusecase: Loginusecase(repositiry: Authrepoimpl.init()),
+        logoutusecase: Logoutusecase(authRepo: Authrepoimpl.init()),
+              getallusersusecase: Getallusersusecase(
+                authRepository: Authrepoimpl.init(),
+              ),
+      ),
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           // TODO: implement listener

@@ -1,10 +1,9 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/cubits/logincubit/login_cubit.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/logincubit/login_cubit.dart';
 import 'package:lastu_pdate_chat_app/src/presentation/screens/friends.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/screens/register.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/pages/register.dart';
 import 'package:lastu_pdate_chat_app/src/services/components.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,10 +22,9 @@ class Loginscreen extends StatelessWidget {
           );
           // log(state.error);
         } else if (state is getUserSuccessState) {
-          LoginCubit.get(context).emailcontroller.clear();
-          LoginCubit.get(context).passcontroller.clear();
+        context.read<LoginCubit>().emailcontroller.clear();
+        context.read<LoginCubit>().passcontroller.clear();
           final prefs = await SharedPreferences.getInstance();
-          await saveUserIdToPrefs();
 
           final userId = prefs.getString('user_id');
           if (userId != null) {
@@ -91,6 +89,14 @@ class Loginscreen extends StatelessWidget {
                     ),
                     SizedBox(height: 22),
                     defulitTextFormField(
+                      onFieldSubmitted:(value)async{
+                        FocusScope.of(context).unfocus();
+                            cubit.getUser(
+                              Email: cubit.emailcontroller.text,
+                              password: cubit.passcontroller.text,
+                            );
+                            cubit.getAllusers();
+                      } ,
                       isobscure: cubit.isscure,
                       controller: cubit.passcontroller,
                       validator: (value) {
@@ -124,7 +130,7 @@ class Loginscreen extends StatelessWidget {
                               Email: cubit.emailcontroller.text,
                               password: cubit.passcontroller.text,
                             );
-                            cubit.getAllUser();
+                            cubit.getAllusers();
                           }
                         },
                         child: state is getUserloadingState
