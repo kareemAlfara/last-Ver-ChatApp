@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/logincubit/registercubit/register_cubit.dart';
+import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/registercubit/register_cubit.dart';
 
 
 class registerImage extends StatelessWidget {

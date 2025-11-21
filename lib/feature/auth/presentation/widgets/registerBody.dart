@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/registercubit/register_cubit.dart';
