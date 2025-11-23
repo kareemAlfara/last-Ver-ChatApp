@@ -50,3 +50,7 @@ final class PlayerComplete extends MessagesState {
  
 }
 final class playAudio extends MessagesState {}
+// ✅ إضافة States البحث
+final class SearchToggleState extends MessagesState {}
+
+final class SearchResultState extends MessagesState {}

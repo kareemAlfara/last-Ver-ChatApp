@@ -332,6 +332,50 @@ Future<void> sendContactMessage({
     print('❌ Error sending contact: $e');
   }
 }
+
+  // ✅ إضافة متغيرات البحث
+  bool isSearching = false;
+  String searchQuery = '';
+  List<MessageEntity> filteredMessages = [];
+  final TextEditingController searchController = TextEditingController();
+
+  // ✅ دالة لتفعيل/إلغاء البحث
+  void toggleSearch() {
+    isSearching = !isSearching;
+    if (!isSearching) {
+      searchController.clear();
+      searchQuery = '';
+      filteredMessages.clear();
+    }
+    emit(SearchToggleState());
+  }
+
+  // ✅ دالة للبحث في الرسائل
+  void searchMessages(String query) {
+    searchQuery = query;
+    
+    if (query.isEmpty) {
+      filteredMessages.clear();
+      emit(SearchResultState());
+      return;
+    }
+
+    filteredMessages = MessagesList.where((message) {
+      final messageText = message.message?.toLowerCase() ?? '';
+      final searchLower = query.toLowerCase();
+      return messageText.contains(searchLower);
+    }).toList();
+
+    emit(SearchResultState());
+  }
+
+  // ✅ دالة للحصول على الرسائل المعروضة (عادية أو نتائج بحث)
+  List<MessageEntity> get displayedMessages {
+    return isSearching && searchQuery.isNotEmpty 
+        ? filteredMessages 
+        : MessagesList;
+  }
+  
 }
 
 

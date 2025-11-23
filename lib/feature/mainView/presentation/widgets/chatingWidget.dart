@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lastu_pdate_chat_app/feature/mainView/data/models/messageModel.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/entities/MessageEtity.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/presentation/cubits/meesagescubit/messages_cubit.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/presentation/widgets/audioWidget.dart';
@@ -13,42 +11,46 @@ class chatingWidget extends StatelessWidget {
   const chatingWidget({
     super.key,
     required this.messagemodel,
-    required this.receiverId, required this.index,
+    required this.receiverId,
+    required this.index,
+    this.searchQuery,
   });
+  
   final int index;
   final MessageEntity messagemodel;
   final String receiverId;
+  final String? searchQuery;
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MessagesCubit, MessagesState>(
-      listener: (context, state) {
-        // print("userder : ${messagemodel.Sender_id}");
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         DateTime parsedDate = DateTime.parse(messagemodel.created_at);
         DateTime localTime = parsedDate.toLocal();
         bool showDate = false;
-        if (index ==   MessagesCubit.get(context).MessagesList.length-1) {
-          // Always show date for first message
+        
+        // ✅ استخدم displayedMessages بدلاً من MessagesList
+        final cubit = MessagesCubit.get(context);
+        final messagesList = cubit.displayedMessages;
+        
+        if (index == messagesList.length - 1) {
           showDate = true;
         } else {
-          // Compare with previous message date
           DateTime prevParsedDate = DateTime.parse(
-            MessagesCubit.get(context).MessagesList[index + 1].created_at,
+            messagesList[index + 1].created_at,
           );
           DateTime prevLocalTime = prevParsedDate.toLocal();
 
-          // Check if dates are different (ignoring time)
           if (localTime.year != prevLocalTime.year ||
               localTime.month != prevLocalTime.month ||
               localTime.day != prevLocalTime.day) {
             showDate = true;
-          }
-          else{
+          } else {
             showDate = false;
-
           }
         }
+        
         return GestureDetector(
           onLongPress: () {
             showDialog(
@@ -65,15 +67,9 @@ class chatingWidget extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () async {
-                      // Delete message - real-time listener will handle UI update
-                      await MessagesCubit.get(
-                        context,
-                      ).deleteMessage(messagemodel.id);
+                      await MessagesCubit.get(context).deleteMessage(messagemodel.id);
                       FocusScope.of(context).unfocus();
                       Navigator.pop(context);
-
-                      // No need to manually call fetchMessages anymore
-                      // The real-time listener will automatically update both users
                     },
                     child: Text("Delete", style: TextStyle(color: Colors.red)),
                   ),
@@ -83,12 +79,14 @@ class chatingWidget extends StatelessWidget {
           },
           child: Column(
             children: [
-            showDate?  defulttext(
-                data: intl.DateFormat.yMMMMd().format(localTime),
-                color: Colors.white,
-                fSize: 18,
-                fw: FontWeight.bold,
-              ):SizedBox.shrink(),
+              showDate
+                  ? defulttext(
+                      data: intl.DateFormat.yMMMMd().format(localTime),
+                      color: Colors.white,
+                      fSize: 18,
+                      fw: FontWeight.bold,
+                    )
+                  : SizedBox.shrink(),
               Align(
                 alignment: messagemodel.Sender_id == uid
                     ? Alignment.topLeft
@@ -115,14 +113,9 @@ class chatingWidget extends StatelessWidget {
                       alignment: Alignment.bottomLeft,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                            // left: 18.0,
-                            // right: 18,
-                            bottom: 18,
-                          ),
+                          padding: const EdgeInsets.only(bottom: 18),
                           child: buildMessageContent(context),
                         ),
-
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 4.0,
@@ -133,9 +126,7 @@ class chatingWidget extends StatelessWidget {
                               ? Container(
                                   color: Primarycolor,
                                   child: defulttext(
-                                    data: intl.DateFormat(
-                                      'HH:mm',
-                                    ).format(localTime),
+                                    data: intl.DateFormat('HH:mm').format(localTime),
                                     color: Colors.grey,
                                     fw: FontWeight.bold,
                                   ),
@@ -146,9 +137,7 @@ class chatingWidget extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(22),
                                   ),
                                   child: defulttext(
-                                    data: intl.DateFormat(
-                                      'HH:mm',
-                                    ).format(localTime),
+                                    data: intl.DateFormat('HH:mm').format(localTime),
                                     color: Colors.black,
                                     fw: FontWeight.bold,
                                   ),
@@ -169,48 +158,67 @@ class chatingWidget extends StatelessWidget {
   Widget buildMessageContent(BuildContext context) {
     final fileUrl = messagemodel.image_url ?? '';
     final messageText = messagemodel.message ?? '';
-  if (messageText.startsWith('📱')) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.person, color: Colors.blue, size: 30),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              messageText,
-              style: TextStyle(color: Colors.white, fontSize: 15),
+
+    // ✅ 1. Contact
+    if (messageText.startsWith('📱')) {
+      return Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.person, color: Colors.blue, size: 30),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                messageText,
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-    // If fileUrl is missing AND message has no media => text only
+          ],
+        ),
+      );
+    }
+
+    // ✅ 2. Text only (with search highlight)
     if (fileUrl.isEmpty && messageText.isNotEmpty) {
+      // إذا كان في بحث، ميّز النص
+      if (searchQuery != null &&
+          searchQuery!.isNotEmpty &&
+          messageText.toLowerCase().contains(searchQuery!.toLowerCase())) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RichText(
+            text: _highlightSearchText(messageText, searchQuery!),
+          ),
+        );
+      }
+
+      // نص عادي بدون بحث
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: defulttext(data: messageText, fSize: 17),
       );
     }
 
+    // ✅ 3. Files (audio, location, video, pdf, images)
     final uri = Uri.tryParse(fileUrl);
     final fileExtension = uri?.path.split('.').last.toLowerCase() ?? '';
     final isLocation = fileUrl.startsWith("https://www.google.com/maps");
-    // --- Audio ---
+
+    // Audio
     if (fileExtension == 'mp3' || fileUrl.contains('.mp3')) {
       return AudioMessageWidget(
         audioUrl: fileUrl,
         isSentByMe: messagemodel.Sender_id == uid,
       );
-    } else if (isLocation) {
+    }
+    // Location
+    else if (isLocation) {
       return GestureDetector(
         onTap: () async {
-          await MessagesCubit.get(context).openFile(fileUrl, context);
           Uri url = Uri.parse(fileUrl);
           if (await canLaunchUrl(url)) {
             await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -229,19 +237,20 @@ class chatingWidget extends StatelessWidget {
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 17,
-                // decoration: TextDecoration.underline,
               ),
             ),
           ],
         ),
       );
-    } else if (fileExtension == 'mp4' || fileUrl.contains('.mp4')) {
+    }
+    // Video
+    else if (fileExtension == 'mp4' || fileUrl.contains('.mp4')) {
       return AudioMessageWidget(
         audioUrl: fileUrl,
         isSentByMe: messagemodel.Sender_id == uid,
       );
     }
-    // --- PDF ---
+    // PDF
     else if (fileExtension == 'pdf') {
       final fileName = fileUrl.split('uploads/').last;
       return GestureDetector(
@@ -258,7 +267,7 @@ class chatingWidget extends StatelessWidget {
         ),
       );
     }
-    // --- Image ---
+    // Images
     else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(fileExtension)) {
       return GestureDetector(
         onTap: () => MessagesCubit.get(context).openFile(fileUrl, context),
@@ -269,108 +278,61 @@ class chatingWidget extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       );
-    } else {
-      Padding(
-        padding: const EdgeInsets.only(top: 8.0, left: 8, right: 0),
-        child: defulttext(data: messageText, fSize: 17),
-      );
     }
 
-    // Fallback again if nothing works
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: defulttext(data: messageText, fSize: 17),
-        ),
-      ],
+    // ✅ Fallback: رسالة نصية
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: defulttext(data: messageText, fSize: 17),
     );
   }
 
-  //   Widget buildMessageContent(BuildContext context) {
-  //     final fileUrl = messagemodel.image_url;
-  //     final url = messagemodel.image_url;
-  //     String fileName = url.split('uploads/').last;
-  //     if (fileUrl != null && fileUrl.isNotEmpty) {
-  //       final fileExtension = fileUrl.split('.').last.toLowerCase();
+  // ✅ دالة لتمييز النص المطابق بالأصفر
+  TextSpan _highlightSearchText(String text, String query) {
+    if (query.isEmpty) {
+      return TextSpan(
+        text: text,
+        style: TextStyle(color: Colors.white, fontSize: 17),
+      );
+    }
 
-  //       if (fileExtension == 'pdf') {
-  //         // 📄 PDF Section
-  //         return GestureDetector(
-  //           onTap: () async {
-  //             // final url = messagemodel.image_url;
+    final matches = <TextSpan>[];
+    final lowerText = text.toLowerCase();
+    final lowerQuery = query.toLowerCase();
+    int start = 0;
 
-  //             await MessagesCubit.get(context).openFile(url, context);
-  //           },
-  //           child: Container(
-  //             // color: Colors.grey[200],
-  //             padding: EdgeInsets.all(8),
-  //             child: Row(
-  //               children: [
-  //                 Icon(Icons.picture_as_pdf, color: Colors.red, size: 30),
-  //                 SizedBox(width: 10),
-  //                 Text('$fileName'),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       } else if ([
-  //         'jpg',
-  //         'jpeg',
-  //         'png',
-  //         'gif',
-  //         'webp',
-  //       ].contains(fileExtension)) {
-  //         // 🖼️ Image Section
-  //         return GestureDetector(
-  //           onTap: () async {
-  //             final url = messagemodel.image_url;
+    while (true) {
+      final index = lowerText.indexOf(lowerQuery, start);
+      if (index == -1) {
+        if (start < text.length) {
+          matches.add(TextSpan(
+            text: text.substring(start),
+            style: TextStyle(color: Colors.white, fontSize: 17),
+          ));
+        }
+        break;
+      }
 
-  //             await MessagesCubit.get(context).openFile(url, context);
-  //           },
-  //           child: Image.network(
-  //             fileUrl,
-  //             width: 200,
-  //             height: 130,
-  //             fit: BoxFit.cover,
-  //           ),
-  //         );
-  //       }  else if (['mp3'].contains(fileExtension)) {
-  //   return  AudioMessageWidget(
-  //     audioUrl: fileUrl,
-  //     isSentByMe: messagemodel.Sender_id == uid,
-  //   );
-  // }else {
-  //         // 📁 Other File Types Section
-  //         return GestureDetector(
-  //           onTap: () async {
-  //             await MessagesCubit.get(context).openFile(fileUrl, context);
-  //           },
-  //           child: Container(
-  //             color: Colors.grey[300],
-  //             padding: EdgeInsets.all(8),
-  //             child: Row(
-  //               children: [
-  //                 Icon(Icons.insert_drive_file, color: Colors.blue, size: 30),
-  //                 SizedBox(width: 8),
-  //                 Expanded(
-  //                   child: Text(
-  //                     fileUrl.split('/').last, // Show only file name
-  //                     style: TextStyle(color: Colors.black),
-  //                     overflow: TextOverflow.ellipsis,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       }
-  //     }
+      if (index > start) {
+        matches.add(TextSpan(
+          text: text.substring(start, index),
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        ));
+      }
 
-  //     // 📝 Fallback to text message
-  //     return Padding(
-  //       padding: const EdgeInsets.all(8.0),
-  //       child: defulttext(data: messagemodel.message, fSize: 17),
-  //     );
-  //   }
+      matches.add(TextSpan(
+        text: text.substring(index, index + query.length),
+        style: TextStyle(
+          color: Colors.black,
+          backgroundColor: Colors.yellow,
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+        ),
+      ));
+
+      start = index + query.length;
+    }
+
+    return TextSpan(children: matches);
+  }
 }
