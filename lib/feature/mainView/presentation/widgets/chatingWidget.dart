@@ -169,7 +169,27 @@ class chatingWidget extends StatelessWidget {
   Widget buildMessageContent(BuildContext context) {
     final fileUrl = messagemodel.image_url ?? '';
     final messageText = messagemodel.message ?? '';
-
+  if (messageText.startsWith('📱')) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.person, color: Colors.blue, size: 30),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              messageText,
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
     // If fileUrl is missing AND message has no media => text only
     if (fileUrl.isEmpty && messageText.isNotEmpty) {
       return Padding(

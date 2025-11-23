@@ -208,19 +208,11 @@ Widget bottomSheet(context, {required String receiverId}) {
                 SizedBox(width: 40),
                 iconCreation(Icons.person, Colors.blue, "Contact",
                   onTap: () async {
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles();
-
-                    if (result != null && result.files.single.path != null) {
-                      File file = File(result.files.single.path!);
-
-                      Navigator.pop(context);
-                      await MessagesCubit.get(context).sendAudioMessage(
-                        receiverId: receiverId,
-                        audioFile: file,
-                      );
-                    }
-                    ;
+                   Navigator.pop(context);
+    await MessagesCubit.get(context).pickAndSendContact(
+      receiverId: receiverId,
+      context: context,
+    );
                   },),
               ],
             ),

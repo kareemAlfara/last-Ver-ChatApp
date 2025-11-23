@@ -2,9 +2,9 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/data/models/messageModel.dart';
-import 'package:lastu_pdate_chat_app/feature/mainView/data/repositories/chatapp_repository.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/entities/MessageEtity.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/deleteMessageUsecae.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/fetchMessage.dart';
@@ -13,14 +13,13 @@ import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/sendmessag
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/uploadFileToSupabaseUsecase.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/uploadImageToSupabaseUsecase.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/usecase.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/presentation/widgets/contactDialog.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/services/Dependencies_Injection.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/services/components.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
@@ -92,65 +91,6 @@ class MessagesCubit extends Cubit<MessagesState> {
       },
     );
   }
-
-  // insterMessage({
-  //   required String receiver_id,
-  //   String? message,
-  //   String? imageUrl,
-  // }) async {
-  //   String chatId = generateChatId(uid!, receiver_id);
-  //   final String messageId = const Uuid().v4(); // generate UUID
-
-  //   try {
-  //     final response = await Supabase.instance.client
-  //         .from("messages")
-  //         .insert({
-  //           "Sender_id": uid,
-  //           "message_id": messageId, // ADD THIS
-  //           // "message": message,
-  //           'Messages': message ?? '',
-  //           if (imageUrl != null && imageUrl.isNotEmpty) 'files_url': imageUrl,
-  //           "chat_between": chatId,
-  //           "Recever_id": receiver_id,
-  //         })
-  //         .select()
-  //         .single();
-  //     messagemodel = Messagemodel.fromJson(response);
-  //     // log(messagemodel!.created_at);
-  //     print("1111111111111111111111111111");
-  //     emit(MessagesInsertsuccess());
-  //   } on Exception catch (e) {
-  //     // TODO
-  //     log(e.toString());
-  //     emit(MessagesInsertfailure());
-  //   }
-  // }
-
-  // List<Messagemodel> data = [];
-  // Future<void> fetchMessages({required String receiverId}) async {
-  //   String chatId = generateChatId(uid!, receiverId);
-  //   await Supabase.instance.client
-  //       .from('messages')
-  //       .stream(primaryKey: ['id'])
-  //       .eq(
-  //         'chat_between',
-  //         chatId,
-  //       ) // Use your primary key    (filter by sender in subscribeToMessages)
-  //       .order('created_at')
-  //       .listen((List<Map<String, dynamic>> data) {
-  //         this.data.clear(); // Optional: clear existing data
-
-  //         for (var row in data) {
-  //           this.data.add(
-  //             Messagemodel.fromJson(row),
-  //           ); // Ensure fromJson is implemented
-  //         }
-  //         if (!isClosed) {
-  //           emit(FetchmessagesSucess());
-  //         }
-  //       });
-  // }
-
   changeSend(value) {
     if (value.length > 0) {
       sendButton = true;
@@ -229,57 +169,6 @@ class MessagesCubit extends Cubit<MessagesState> {
       return null;
     }
   }
-
-  // // Alternative approach: Listen to specific database events
-  // Future<void> listenToMessageChanges({required String receiverId}) async {
-  //   String chatId = generateChatId(uid!, receiverId);
-
-  //   // Listen to all changes (INSERT, UPDATE, DELETE)
-  //   Supabase.instance.client
-  //       .channel('messages_channel')
-  //       .onPostgresChanges(
-  //         event: PostgresChangeEvent.all,
-  //         schema: 'public',
-  //         table: 'messages',
-  //         filter: PostgresChangeFilter(
-  //           type: PostgresChangeFilterType.eq,
-  //           column: 'chat_between',
-  //           value: chatId,
-  //         ),
-  //         callback: (payload) {
-  //           print('Database change detected: ${payload.eventType}');
-
-  //           // Refresh messages when any change occurs
-  //           _refreshMessages(receiverId);
-  //         },
-  //       )
-  //       .subscribe();
-  // }
-
-  // // Helper method to refresh messages
-  // Future<void> _refreshMessages(String receiverId) async {
-  //   String chatId = generateChatId(uid!, receiverId);
-
-  //   try {
-  //     final response = await Supabase.instance.client
-  //         .from('messages')
-  //         .select()
-  //         .eq('chat_between', chatId)
-  //         .order('created_at');
-
-  //     data.clear();
-  //     for (var row in response) {
-  //       data.add(Messagemodel.fromJson(row));
-  //     }
-
-  //     if (!isClosed) {
-  //       emit(FetchmessagesSucess());
-  //     }
-  //   } catch (e) {
-  //     print('Error refreshing messages: $e');
-  //   }
-  // }
-
   Future<void> deleteMessage(int messageId) async {
     try {
       await deletemessageusecae.execute(messageId);
@@ -364,4 +253,85 @@ class MessagesCubit extends Cubit<MessagesState> {
       print("Error getting location: $e");
     }
   }
+Future<void> pickAndSendContact({
+  required String receiverId,
+  required BuildContext context,
+}) async {
+  try {
+    // 1. طلب إذن الوصول لجهات الاتصال
+    if (!await FlutterContacts.requestPermission(readonly: true)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('يجب السماح بالوصول إلى جهات الاتصال')),
+      );
+      return;
+    }
+
+    // 2. جلب كل جهات الاتصال مع الأرقام
+    List<Contact> contacts = await FlutterContacts.getContacts(
+      withProperties: true, // ✅ مهم جداً: يجلب الأرقام والإيميلات
+    );
+
+    if (contacts.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('لا توجد جهات اتصال')),
+      );
+      return;
+    }
+
+    // 3. عرض قائمة جهات الاتصال للاختيار
+    Contact? selectedContact = await showDialog<Contact>(
+      context: context,
+      builder: (BuildContext context) {
+        return ContactDialog(contacts: contacts);
+      },
+    );
+
+    // 4. إرسال جهة الاتصال المحددة
+    if (selectedContact != null) {
+      await sendContactMessage(
+        receiverId: receiverId,
+        contact: selectedContact,
+      );
+    }
+  } catch (e) {
+    print('❌ Error picking contact: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('حدث خطأ في الوصول إلى جهات الاتصال')),
+    );
+  }
 }
+Future<void> sendContactMessage({
+  required String receiverId,
+  required Contact contact,
+}) async {
+  try {
+    // تجهيز معلومات جهة الاتصال
+  List<String> contactParts = [];    // الاسم
+    contactParts.add('📱 ${contact.displayName.isNotEmpty ? contact.displayName : 'بدون اسم'}');
+
+    // الرقم
+    if (contact.phones.isNotEmpty) {
+      contactParts.add('📞 ${contact.phones.first.number}');
+    }
+
+    // الإيميل
+    if (contact.emails.isNotEmpty) {
+      contactParts.add('📧 ${contact.emails.first.address}');
+    }
+
+    String contactInfo = contactParts.join('\n');
+
+    // إرسال الرسالة
+    await sendMessage(
+      receiver_id: receiverId,
+      message: contactInfo,
+    );
+
+    print('✅ Contact sent successfully');
+  } catch (e) {
+    print('❌ Error sending contact: $e');
+  }
+}
+}
+
+
