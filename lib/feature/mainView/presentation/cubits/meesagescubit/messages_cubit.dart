@@ -189,6 +189,7 @@ class MessagesCubit extends Cubit<MessagesState> {
   Future<String?> uploadFileToSupabase({required String receiverId}) async {
     try {
       var response = await uploadFileToSupabaseUsecas.Execute(receiverId);
+      await sendMessage(receiver_id: receiverId, imageUrl: response);
       return response;
     } catch (e) {
       print('Upload error: $e');
@@ -353,7 +354,12 @@ class MessagesCubit extends Cubit<MessagesState> {
       String mapsUrl =
           "https://www.google.com/maps?q=${position.latitude},${position.longitude}";
 
-      await sl<MessagesCubit>();
+      await sl<MessagesCubit>().sendMessage(
+        receiver_id: receiver_id,
+        message: '',
+        imageUrl: mapsUrl, // Send as text
+      );
+      ;
     } catch (e) {
       print("Error getting location: $e");
     }
