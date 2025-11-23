@@ -1,6 +1,6 @@
 import 'package:lastu_pdate_chat_app/feature/auth/data/models/usersmodel.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/data/repositoryImpl/auth_local_data_source.dart';
-import 'package:lastu_pdate_chat_app/src/services/components.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/services/components.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

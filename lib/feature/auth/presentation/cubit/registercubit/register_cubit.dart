@@ -9,9 +9,7 @@ import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/createuserUsec
 import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/getAllusersusecase.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/uploadimageUsecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 part 'register_state.dart';
-
 class RegisterCubit extends Cubit<RegisterState> {
   final Createuserusecase createuserusecase;
   final Getallusersusecase getallusersusecase;

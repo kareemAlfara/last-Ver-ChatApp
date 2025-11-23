@@ -1,6 +1,6 @@
 name: lastu_pdate_chat_app
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -19,6 +19,7 @@ dependencies:
   flutter_sound: ^9.28.0
   fluttertoast: ^9.0.0
   geolocator: ^14.0.2
+  get_it: ^9.1.0
   http: ^1.6.0
   image_picker: ^1.2.1
   intl: ^0.20.2
@@ -36,19 +37,25 @@ dependencies:
   zego_uikit_prebuilt_call: ^4.21.1
 
 dev_dependencies:
+
   flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.7
+  flutter_test:
+    sdk: flutter
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/3.png
+  android: true
+  ios: true
+
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/3.png"
-
-  flutter_test:
-
-    sdk: flutter
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
     - assets/
-

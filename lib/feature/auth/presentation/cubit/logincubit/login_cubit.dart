@@ -1,19 +1,14 @@
-import 'dart:async'; // ADD THIS IMPORT
+import 'dart:async';
 import 'dart:developer';
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lastu_pdate_chat_app/core/errors/AuthError.dart';
-import 'package:lastu_pdate_chat_app/feature/auth/data/models/usersmodel.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/entities/userEntity.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/getAllusersusecase.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/loginusecase.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/logoutUsecase.dart';
-import 'package:lastu_pdate_chat_app/src/services/components.dart';
-import 'package:meta/meta.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/services/components.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
@@ -107,7 +102,6 @@ class LoginCubit extends Cubit<LoginState> {
       print("Logout error: $e");
     }
   }
-
   // CRITICAL FIX: Add dispose method to cancel subscriptions
   @override
   Future<void> close() async {

@@ -8,14 +8,15 @@ import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/logoutUsecase.
 import 'package:lastu_pdate_chat_app/feature/auth/domain/usecases/uploadimageUsecase.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/logincubit/login_cubit.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/registercubit/register_cubit.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/screens/onboading.dart';
-import 'package:lastu_pdate_chat_app/src/presentation/screens/wellcome_chatApp.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/presentation/screens/onboading.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/presentation/screens/wellcome_chatApp.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/services/Dependencies_Injection.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/services/components.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Supabase.initialize(
     url: "https://orkxfcrrumuueykftemn.supabase.co",
     anonKey:
@@ -25,6 +26,13 @@ void main(List<String> args) async {
 
   final prefs = await SharedPreferences.getInstance();
   final userId = prefs.getString('user_id');
+  print("User ID from SharedPreferences: $userId");
+  uid = userId;
+  final currentUser = Supabase.instance.client.auth.currentUser;
+if (currentUser != null) {
+  uid = currentUser.id;
+}
+  setupDependencies();
 
   runApp(MyApp(isLoggedIn: userId != null));
 }
@@ -40,7 +48,7 @@ class MyApp extends StatelessWidget {
           create: (context) {
             final cubit = LoginCubit(
               loginusecase: Loginusecase(repositiry: Authrepoimpl.init()),
-              logoutusecase: Logoutusecase( authRepo:  Authrepoimpl.init(), ),
+              logoutusecase: Logoutusecase(authRepo: Authrepoimpl.init()),
               getallusersusecase: Getallusersusecase(
                 authRepository: Authrepoimpl.init(),
               ),

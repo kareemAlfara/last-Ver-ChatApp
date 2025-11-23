@@ -4,7 +4,7 @@ import 'package:lastu_pdate_chat_app/feature/auth/data/repositoryImpl/auth_local
 import 'package:lastu_pdate_chat_app/feature/auth/data/repositoryImpl/authremoteData.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/entities/userEntity.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/domain/repository/repo.dart';
-import 'package:lastu_pdate_chat_app/src/services/components.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/services/components.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';

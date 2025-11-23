@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/presentation/cubit/registercubit/register_cubit.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/presentation/pages/loginScreen.dart';
 import 'package:lastu_pdate_chat_app/feature/auth/presentation/widgets/registerImage.dart';
-import 'package:lastu_pdate_chat_app/src/services/components.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/services/components.dart';
 
 
 
