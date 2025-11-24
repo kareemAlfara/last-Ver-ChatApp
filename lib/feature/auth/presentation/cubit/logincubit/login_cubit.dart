@@ -76,6 +76,7 @@ class LoginCubit extends Cubit<LoginState> {
   List<Userentity> userslist = [];
   getAllusers() async {
     try {
+      emit(getAllUsersLoadingState());
     userslist = await getallusersusecase.execute();
 
       emit(getAllUsersSuccessState());

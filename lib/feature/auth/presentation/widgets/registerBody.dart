@@ -93,7 +93,7 @@ class registerBody extends StatelessWidget {
                           email: cubit.emailcontroller.text,
                           name: cubit.namecontroller.text,
                           password: cubit.passcontroller.text,
-                          phonenumber: cubit.phonecontroller.text,
+                          phonenumber:int.tryParse(cubit.phonecontroller.text)??0,
                           image: '',
                         );
                       },
@@ -120,7 +120,7 @@ class registerBody extends StatelessWidget {
                               email: cubit.emailcontroller.text,
                               name: cubit.namecontroller.text,
                               password: cubit.passcontroller.text,
-                              phonenumber: cubit.phonecontroller.text,
+                              phonenumber: int.tryParse(cubit.phonecontroller.text) ?? 0,
                               image: '',
                             );
                           }

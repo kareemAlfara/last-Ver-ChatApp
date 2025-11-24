@@ -11,7 +11,7 @@ class Createuserusecase {
     required String name,
     required String image,
     required String password,
-    required String phonenumber,
+    required int phonenumber,
   }) async {
     return await authRepository.createUser(
       email: email,

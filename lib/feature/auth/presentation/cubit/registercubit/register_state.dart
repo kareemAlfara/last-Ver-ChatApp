@@ -20,6 +20,7 @@ final class createUserFailureState extends RegisterState {
 }
 
 final class getAllUsersSuccessState extends RegisterState {}
+final class getAllUsersLoadingState extends RegisterState {}
 
 final class getAllUsersFailureState extends RegisterState {
   final String error;

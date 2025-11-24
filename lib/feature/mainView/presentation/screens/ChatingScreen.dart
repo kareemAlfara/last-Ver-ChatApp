@@ -1,10 +1,7 @@
+import 'package:lastu_pdate_chat_app/feature/auth/domain/entities/userEntity.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lastu_pdate_chat_app/feature/auth/data/models/usersmodel.dart';
-import 'package:lastu_pdate_chat_app/feature/auth/domain/entities/userEntity.dart';
-import 'package:lastu_pdate_chat_app/feature/mainView/data/repositories/chatapp_repository.dart';
-import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/fetchMessage.dart';
-import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/sendmessageUsecase.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/presentation/cubits/meesagescubit/messages_cubit.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/presentation/screens/CallPage%20.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/presentation/widgets/chatingWidget.dart';
@@ -187,16 +184,15 @@ class Chatingscreen extends StatelessWidget {
                     Expanded(
                       child: cubit.displayedMessages.isEmpty
                           ? Center(
-                              child: Text(
-                                cubit.isSearching
-                                    ? 'No messages found'
-                                    : 'No messages yet',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            )
+                  child: TweenAnimationBuilder<double>(
+                    duration: Duration(seconds: 400),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    builder: (context, value, child) {
+                      return Opacity(opacity: value, child: child);
+                    },
+                    child: defulttext(data: "No Messages yet"),
+                  ),
+                )
                           : ListView.builder(
                               controller: cubit.scrollController,
                               reverse: true,

@@ -3,6 +3,7 @@ import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/deleteMess
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/sendAudioMessageusecase.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/uploadFileToSupabaseUsecase.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/domain/usecases/uploadImageToSupabaseUsecase.dart';
+import 'package:lastu_pdate_chat_app/feature/mainView/presentation/cubits/userCubit/user_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/data/datasources/message_remote_data_source.dart';
 import 'package:lastu_pdate_chat_app/feature/mainView/data/datasources/supabase_message_data_source.dart';
@@ -19,9 +20,7 @@ void setupDependencies() {
   final currentUserId = Supabase.instance.client.auth.currentUser?.id ?? '';
 
   // 2. Register SupabaseClient
-  sl.registerLazySingleton<SupabaseClient>(
-    () => Supabase.instance.client,
-  );
+  sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
 
   // 3. Register DataSource
   sl.registerLazySingleton<MessageRemoteDataSource>(
@@ -30,27 +29,38 @@ void setupDependencies() {
 
   // 4. Register Repository
   sl.registerLazySingleton<MessageRepository>(
-    () => MessageRepositoryImpl(
-      sl<MessageRemoteDataSource>(),
-      currentUserId,
-    ),
+    () => MessageRepositoryImpl(sl<MessageRemoteDataSource>(), currentUserId),
   );
 
   // 5. Register ALL UseCases ✅ (THIS WAS MISSING!)
   sl.registerLazySingleton(() => Sendmessageusecase(sl<MessageRepository>()));
   sl.registerLazySingleton(() => FetchmessageUsecase(sl<MessageRepository>()));
   sl.registerLazySingleton(() => Deletemessageusecae(sl<MessageRepository>()));
-  sl.registerLazySingleton(() => uploadFileToSupabaseUsecase(messageRepository: sl<MessageRepository>()));
-  sl.registerLazySingleton(() => uploadImageToSupabaseUsecase(messageRepository: sl<MessageRepository>()));
-  sl.registerLazySingleton(() => Sendaudiomessageusecase(sl<MessageRepository>()));
+  sl.registerLazySingleton(
+    () =>
+        uploadFileToSupabaseUsecase(messageRepository: sl<MessageRepository>()),
+  );
+  sl.registerLazySingleton(
+    () => uploadImageToSupabaseUsecase(
+      messageRepository: sl<MessageRepository>(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => Sendaudiomessageusecase(sl<MessageRepository>()),
+  );
 
   // 6. Register Cubit
-  sl.registerFactory(() => MessagesCubit(
-    sendmessageusecase: sl<Sendmessageusecase>(),
-    fetchmessageUsecase: sl<FetchmessageUsecase>(),
-    deletemessageusecae: sl<Deletemessageusecae>(),
-    uploadFileToSupabaseUsecas: sl<uploadFileToSupabaseUsecase>(),
-    uploadImageToSupabaseUsecas: sl<uploadImageToSupabaseUsecase>(),
-    sendaudiomessageusecase: sl<Sendaudiomessageusecase>(),
-  ));
+  sl.registerFactory(
+    () => MessagesCubit(
+      sendmessageusecase: sl<Sendmessageusecase>(),
+      fetchmessageUsecase: sl<FetchmessageUsecase>(),
+      deletemessageusecae: sl<Deletemessageusecae>(),
+      uploadFileToSupabaseUsecas: sl<uploadFileToSupabaseUsecase>(),
+      uploadImageToSupabaseUsecas: sl<uploadImageToSupabaseUsecase>(),
+      sendaudiomessageusecase: sl<Sendaudiomessageusecase>(),
+    ),
+  );
+  sl.registerFactory(
+    () => UserCubit(uploadimageusecase: sl<uploadImageToSupabaseUsecase>()),
+  );
 }

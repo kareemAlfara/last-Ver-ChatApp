@@ -37,7 +37,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     required String password,
     required String name,
     required String image,
-    required String phonenumber,
+    required int phonenumber,
   }) async {
     try {
       emit(createUserLoadingState());
@@ -69,6 +69,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   getAllusers() async {
     try {
+      emit(getAllUsersLoadingState());
       var respone =await getallusersusecase.execute();
       
       emit(getAllUsersSuccessState());

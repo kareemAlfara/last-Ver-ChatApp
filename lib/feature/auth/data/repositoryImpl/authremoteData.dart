@@ -10,7 +10,7 @@ class Authremotedata {
     required String name,
     required String image,
     required String password,
-    required String phonenumber,
+    required int phonenumber,
   })async{
     
       final response = await Supabase.instance.client.auth.signUp(
@@ -20,6 +20,7 @@ class Authremotedata {
   final Usersmodel usersmodel = Usersmodel(
       image: image,
       name: name,
+      phone: phonenumber,
       user_id: response.user!.id,
       email: email,
     );

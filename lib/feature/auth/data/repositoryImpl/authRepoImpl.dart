@@ -30,7 +30,7 @@ class Authrepoimpl extends AuthRepo {
     required String name,
     required String image,
     required String password,
-    required String phonenumber,
+    required int phonenumber,
   }) async {
     Usersmodel usersmodel = await remote.createuser(
       email: email,

@@ -6,7 +6,7 @@ Future<Userentity>  createUser({
     required String name,
     required String image,
     required String password,
-    required String phonenumber,
+    required int phonenumber,
   });
   Future<void> loginUser({required String email, required String password});
   Future<void> logoutUser();
