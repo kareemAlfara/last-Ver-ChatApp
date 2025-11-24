@@ -62,12 +62,12 @@ class Chatingscreen extends StatelessWidget {
                           backgroundImage: NetworkImage(model.image),
                           radius: 22,
                         ),
-                        SizedBox(width: 22),
+                        SizedBox(width: 8),
                         Expanded(
                           child: defulttext(
                             data: model.name,
                             color: Colors.white,
-                            fSize: 22,
+                            fSize: 18,
                           ),
                         ),
                       ],
